@@ -1,0 +1,42 @@
+{
+  "name": "cargo-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "format": "prettier --write \"src/**/*.ts\"",
+    "lint": "eslint \"src/**/*.ts\"",
+    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "build": "npm run clean && tsc",
+    "dev": "tsc-watch --onSuccess \"node dist/run.js\"",
+    "start": "node dist/run.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@grammyjs/runner": "^2.0.3",
+    "dotenv": "^16.0.3",
+    "envalid": "^7.3.1",
+    "grammy": "^1.16.1"
+  },
+  "devDependencies": {
+    "@types/debug": "4.1.7",
+    "@types/node": "18.15.11",
+    "@typescript-eslint/eslint-plugin": "5.59.0",
+    "@typescript-eslint/parser": "5.59.0",
+    "eslint": "8.38.0",
+    "eslint-config-airbnb-base": "15.0.0",
+    "eslint-config-prettier": "8.8.0",
+    "eslint-import-resolver-typescript": "3.5.5",
+    "eslint-plugin-import": "2.27.5",
+    "eslint-plugin-prettier": "4.2.1",
+    "lint-staged": "13.2.1",
+    "prettier": "2.8.7",
+    "rimraf": "5.0.0",
+    "ts-node": "10.9.1",
+    "tsc-watch": "6.0.0",
+    "type-fest": "3.8.0",
+    "typescript": "5.0.4"
+  }
+}
