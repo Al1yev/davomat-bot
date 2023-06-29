@@ -7,6 +7,7 @@ import { Context } from "./types/context";
 import { conversations, createConversation } from "@grammyjs/conversations";
 import { getLoginDataConversation } from "./conversations";
 import { startFeature } from "./features";
+import { handleError } from "./helpers/error-handler";
 
 export const bot = new Bot<Context>(config.BOT_TOKEN);
 
@@ -20,3 +21,9 @@ bot.use(createConversation(getLoginDataConversation));
 
 // Handlers
 bot.use(startFeature);
+
+// Keyboards
+
+if (config.isDev) {
+  bot.catch(handleError);
+}
