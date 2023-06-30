@@ -1,0 +1,31 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  STUDENT
+  GROUP
+}
+
+model student {
+  id          Int       @id @default(autoincrement())
+  first_name  String
+  last_name   String
+  group       group     @relation(fields: [group_id], references: [id])
+  group_id    Int
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+}
+
+model group {
+  id          Int       @id @default(autoincrement())
+  name        String
+  students    student[]
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+}

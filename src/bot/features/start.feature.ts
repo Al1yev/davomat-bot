@@ -2,6 +2,7 @@ import { Composer } from "grammy";
 import { Context } from "../types/context";
 import { studentKeyboard } from "../keyboards";
 import { bot } from "..";
+import { getAllStudents } from "../../services/getAllStudents.service";
 
 export const composer = new Composer<Context>();
 
@@ -38,41 +39,46 @@ const sutdents = [
 feature.command("start", async (ctx) => {
   try {
     await ctx.reply("Hello!");
+    console.log(await getAllStudents());
+    // // Rendering inline keyboard
+    // sutdents.forEach((val) => {
+    //   studentKeyboard
+    //     .text(
+    //       `${val.first_name} ${val.last_name} ✅`,
+    //       `true ${sutdents.indexOf(val)}`
+    //     )
+    //     .row();
+    // });
+    // studentKeyboard.text(`Saqlash`, "save");
 
-    // Rendering inline keyboard
-    sutdents.forEach((val) => {
-      studentKeyboard
-        .text(
-          `${val.first_name} ${val.last_name} ✅`,
-          `true ${sutdents.indexOf(val)}`
-        )
-        .row();
-    });
-    studentKeyboard.text(`Saqlash`);
+    // await ctx.reply("Click", { reply_markup: studentKeyboard });
 
-    await ctx.reply("Click", { reply_markup: studentKeyboard });
+    // bot.on("callback_query", async (ctx) => {
+    //   const data = ctx.callbackQuery.data;
+    //   if (data == "save") {
+    //     await ctx.deleteMessage();
+    //     await ctx.reply("Ma'lumotlar saqlandi!");
+    //     return;
+    //   }
+    //   const isHere = data?.split(" ")[0];
+    //   const indexStd = Number(data?.split(" ")[1]);
+    //   const updatedStudent = sutdents[Number(data?.split(" ")[1])];
 
-    bot.on("callback_query", async (ctx) => {
-      const data = ctx.callbackQuery.data;
-      const isHere = data?.split(" ")[0];
-      const indexStd = Number(data?.split(" ")[1]);
-      const updatedStudent = sutdents[Number(data?.split(" ")[1])];
+    //   // Checking students
+    //   if (isHere == "true") {
+    //     studentKeyboard.inline_keyboard[indexStd][0] = {
+    //       text: `${updatedStudent.first_name} ${updatedStudent.last_name} ❌`,
+    //       callback_data: `false ${indexStd}`,
+    //     };
+    //   } else {
+    //     studentKeyboard.inline_keyboard[indexStd][0] = {
+    //       text: `${updatedStudent.first_name} ${updatedStudent.last_name} ✅`,
+    //       callback_data: `true ${indexStd}`,
+    //     };
+    //   }
 
-      // Checking students
-      if (isHere == "true") {
-        studentKeyboard.inline_keyboard[indexStd][0] = {
-          text: `${updatedStudent.first_name} ${updatedStudent.last_name} ❌`,
-          callback_data: `false ${indexStd}`,
-        };
-      } else {
-        studentKeyboard.inline_keyboard[indexStd][0] = {
-          text: `${updatedStudent.first_name} ${updatedStudent.last_name} ✅`,
-          callback_data: `true ${indexStd}`,
-        };
-      }
-
-      await ctx.editMessageText("Click", { reply_markup: studentKeyboard });
-    });
+    //   await ctx.editMessageText("Click", { reply_markup: studentKeyboard });
+    // });
 
     return;
   } catch (error) {
