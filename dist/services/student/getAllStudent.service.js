@@ -7,6 +7,7 @@ async function execute(queryDto) {
     try {
         return await prisma.student.findMany({
             where: { group_id: queryDto === null || queryDto === void 0 ? void 0 : queryDto.groupId },
+            include: { group: true },
         });
     }
     catch (error) {
@@ -14,4 +15,4 @@ async function execute(queryDto) {
     }
 }
 exports.execute = execute;
-//# sourceMappingURL=getAllStudents.service.js.map
+//# sourceMappingURL=getAllStudent.service.js.map

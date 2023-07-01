@@ -3,15 +3,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.execute = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
-async function execute(queryDto) {
+async function execute(id) {
     try {
-        return await prisma.student.findMany({
-            where: { group_id: queryDto === null || queryDto === void 0 ? void 0 : queryDto.groupId },
-        });
+        const group = await prisma.group.findFirst({ where: { id } });
+        if (!group)
+            throw Error("GROUP_NOT_FOUND");
+        return group;
     }
     catch (error) {
         console.error(error);
     }
 }
 exports.execute = execute;
-//# sourceMappingURL=getAllStudents.service.js.map
+//# sourceMappingURL=getOneGroup.service.js.map

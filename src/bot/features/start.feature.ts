@@ -2,7 +2,13 @@ import { Composer } from "grammy";
 import { Context } from "../types/context";
 import { studentKeyboard } from "../keyboards";
 import { bot } from "..";
-import { getAllStudents } from "../../services/getAllStudents.service";
+import {
+  GetAllGroupService,
+  GetAllStudentService,
+  GetOneGroupService,
+  GetOneStudentService,
+  UpdateStudentService,
+} from "./../../services";
 
 export const composer = new Composer<Context>();
 
@@ -39,7 +45,8 @@ const sutdents = [
 feature.command("start", async (ctx) => {
   try {
     await ctx.reply("Hello!");
-    console.log(await getAllStudents());
+    // console.log(await GetOneStudentService(2));
+    console.log(await GetOneStudentService(2));
     // // Rendering inline keyboard
     // sutdents.forEach((val) => {
     //   studentKeyboard

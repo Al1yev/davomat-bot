@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.composer = void 0;
 const grammy_1 = require("grammy");
-const getAllStudents_service_1 = require("../../services/getAllStudents.service");
+const services_1 = require("./../../services");
 exports.composer = new grammy_1.Composer();
 const feature = exports.composer.chatType("private");
 const sutdents = [
@@ -35,7 +35,8 @@ const sutdents = [
 feature.command("start", async (ctx) => {
     try {
         await ctx.reply("Hello!");
-        console.log(await (0, getAllStudents_service_1.getAllStudents)());
+        // console.log(await GetOneStudentService(2));
+        console.log(await (0, services_1.GetOneStudentService)(2));
         // // Rendering inline keyboard
         // sutdents.forEach((val) => {
         //   studentKeyboard
