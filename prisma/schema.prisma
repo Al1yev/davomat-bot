@@ -18,6 +18,7 @@ model student {
   last_name   String
   group       group     @relation(fields: [group_id], references: [id])
   group_id    Int
+  attendances  students_attendaces[]
   created_at  DateTime  @default(now())
   updated_at  DateTime  @updatedAt
 }
@@ -28,4 +29,25 @@ model group {
   students    student[]
   created_at  DateTime  @default(now())
   updated_at  DateTime  @updatedAt
+}
+
+model lesson_date {
+  id          Int       @id @default(autoincrement())
+  date        String
+  attendances students_attendaces[]
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+}
+
+model students_attendaces {
+  id              Int           @id @default(autoincrement())
+  student         student       @relation(fields: [student_id], references: [id])
+  student_id      Int
+  lesson_date     lesson_date    @relation(fields: [lesson_date_id], references: [id])
+  lesson_date_id  Int
+  is_here         Boolean
+  created_at      DateTime      @default(now())
+  updated_at      DateTime      @updatedAt
+
+  @@index([student_id, lesson_date_id])
 }

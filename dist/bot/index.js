@@ -19,6 +19,9 @@ exports.bot.use((0, conversations_1.conversations)());
 exports.bot.use((0, conversations_1.createConversation)(conversations_2.getLoginDataConversation));
 // Handlers
 exports.bot.use(features_1.startFeature);
+exports.bot.use(features_1.helpFeature);
+exports.bot.use(features_1.loginFeature);
+exports.bot.use(features_1.attendanceFeature);
 // Keyboards
 if (config_1.config.isDev) {
     exports.bot.catch(error_handler_1.handleError);

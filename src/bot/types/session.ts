@@ -8,4 +8,5 @@ export interface SessionData {
   in_conversation: boolean;
   statistics_interval: "all" | "day" | "week" | "month";
   show_pass: boolean;
+  group_id: number;
 }

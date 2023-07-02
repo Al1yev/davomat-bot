@@ -7,54 +7,38 @@ export async function getLoginDataConversation(
   ctx: Context
 ) {
   try {
-    await ctx.reply("Enter the following:", {
-      reply_markup: { remove_keyboard: true },
-    });
+    const firstMsg = await ctx.reply("Quyidagilarni kiriting:", {});
     conversation.session.in_conversation = true;
 
-    // Get first_name
-    const fnmsg = await ctx.reply("First Name: ");
-    const firstName = await conversation.form.text();
-    if (firstName == "/cancel") {
-      await ctx.reply("Registration cancelled!", {});
-      conversation.session.in_conversation = false;
+    await ctx.reply("Login:");
+    const login = await conversation.form.text();
+
+    if (login == "/cancel") {
+      const lastMsg = await ctx.reply("Kirish bekor qilindi");
+      ctx.session.in_conversation = false;
+      for (let i = lastMsg.message_id - 1; i >= firstMsg.message_id; i--)
+        await bot.api.deleteMessage(Number(ctx.chat?.id), i);
       return;
     }
 
-    await bot.api.deleteMessage(fnmsg.chat.id, fnmsg.message_id);
-    await bot.api.deleteMessage(fnmsg.chat.id, fnmsg.message_id + 1);
+    await ctx.reply("Parol:");
+    const pwd = await conversation.form.text();
 
-    // Get last_name
-    await ctx.reply("Last Name: ");
-    const lastName = await conversation.form.text();
-    if (lastName == "/cancel") {
-      await ctx.reply("Registration cancelled!", {});
-      conversation.session.in_conversation = false;
+    if (pwd == "/cancel") {
+      const lastMsg = await ctx.reply("Kirish bekor qilindi");
+      ctx.session.in_conversation = false;
+      for (let i = lastMsg.message_id - 1; i >= firstMsg.message_id; i--)
+        await bot.api.deleteMessage(Number(ctx.chat?.id), i);
       return;
     }
 
-    // Get phone_number
-    await ctx.reply("How can we contact you?", {
-      parse_mode: "Markdown",
-      reply_markup: {
-        one_time_keyboard: true,
-        resize_keyboard: true,
-        remove_keyboard: true,
-        keyboard: [
-          [
-            {
-              text: "Share phone number",
-              request_contact: true,
-            },
-          ],
-        ],
-      },
-    });
+    await ctx.reply(`Login: ${login}\nParol: ${pwd}`);
 
+    //
     return;
   } catch (error) {
     try {
-      await ctx.reply("Error occured. Please, try again later.");
+      await ctx.reply("Xatolik yuz berdi. Birozdan keyin urinib ko'ring");
       conversation.session.in_conversation = false;
       return;
     } catch (error) {

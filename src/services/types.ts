@@ -34,3 +34,34 @@ export type TUpdateStudent = {
   last_name?: string;
   group_id?: number;
 };
+
+export type TLessonDate = {
+  id: number;
+  date: string;
+  created_at: Date;
+  updated_at: Date;
+};
+
+export type TCreateLessonDate = {
+  date: string;
+  attendances: TCreateStudentAttendance[];
+};
+
+export type TUpdateLessonDate = {
+  date?: string;
+};
+
+export type TStudentsAttendances = {
+  id: number;
+  student_id: number;
+  lesson_date_id: number;
+  is_here: boolean;
+  created_at: Date;
+  updated_at: Date;
+};
+
+export type TCreateStudentAttendance = {
+  student_id: number;
+  lesson_date_id: number;
+  is_here: boolean;
+};
