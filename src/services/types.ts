@@ -62,6 +62,5 @@ export type TStudentsAttendances = {
 
 export type TCreateStudentAttendance = {
   student_id: number;
-  lesson_date_id: number;
   is_here: boolean;
 };

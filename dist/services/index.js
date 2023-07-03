@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateGroupService = exports.getOneGroupService = exports.getAllGroupService = exports.createGroupService = exports.updateStudentService = exports.getOneStudentService = exports.getAllStudentService = exports.createStudentService = void 0;
+exports.updateAttendanceService = exports.getOneAttendanceService = exports.getAllAttendanceService = exports.createAttendanceService = exports.updateGroupService = exports.getOneGroupService = exports.getAllGroupService = exports.createGroupService = exports.updateStudentService = exports.getOneStudentService = exports.getAllStudentService = exports.createStudentService = void 0;
 var createStudent_service_1 = require("./student/createStudent.service");
 Object.defineProperty(exports, "createStudentService", { enumerable: true, get: function () { return createStudent_service_1.execute; } });
 var getAllStudent_service_1 = require("./student/getAllStudent.service");
@@ -17,4 +17,12 @@ var getOneGroup_service_1 = require("./group/getOneGroup.service");
 Object.defineProperty(exports, "getOneGroupService", { enumerable: true, get: function () { return getOneGroup_service_1.execute; } });
 var updateGroup_service_1 = require("./group/updateGroup.service");
 Object.defineProperty(exports, "updateGroupService", { enumerable: true, get: function () { return updateGroup_service_1.execute; } });
+var createAttendance_service_1 = require("./attendance/createAttendance.service");
+Object.defineProperty(exports, "createAttendanceService", { enumerable: true, get: function () { return createAttendance_service_1.execute; } });
+var getAllAttendance_service_1 = require("./attendance/getAllAttendance.service");
+Object.defineProperty(exports, "getAllAttendanceService", { enumerable: true, get: function () { return getAllAttendance_service_1.execute; } });
+var getOneAttendance_service_1 = require("./attendance/getOneAttendance.service");
+Object.defineProperty(exports, "getOneAttendanceService", { enumerable: true, get: function () { return getOneAttendance_service_1.execute; } });
+var updateAttendance_service_1 = require("./attendance/updateAttendance.service");
+Object.defineProperty(exports, "updateAttendanceService", { enumerable: true, get: function () { return updateAttendance_service_1.execute; } });
 //# sourceMappingURL=index.js.map

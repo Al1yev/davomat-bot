@@ -7,7 +7,14 @@ async function execute(dto) {
     const data = {
         date: dto.date,
     };
-    const attendance = await prisma.attendance.create({ data });
+    const attendance = await prisma.lesson_date.create({
+        data: {
+            date: dto.date,
+            attendances: {
+                create: dto.attendances,
+            },
+        },
+    });
     return attendance;
 }
 exports.execute = execute;

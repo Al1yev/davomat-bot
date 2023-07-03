@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.composer = void 0;
 const grammy_1 = require("grammy");
 const __1 = require("..");
+const services_1 = require("./../../services");
 exports.composer = new grammy_1.Composer();
 const feature = exports.composer.chatType("private");
 feature.command("help", async (ctx) => {
@@ -16,6 +17,7 @@ feature.command("help", async (ctx) => {
             { command: "help", description: "Yo'riqnoma 🤖" },
             { command: "attendance", description: "Davomat qilish" },
         ]);
+        console.log(await (0, services_1.getAllAttendanceService)());
         return;
     }
     catch (error) {

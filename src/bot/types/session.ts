@@ -1,3 +1,5 @@
+import { TCreateStudentAttendance } from "~/services/types";
+
 export interface SessionData {
   user_id: number;
   login: string;
@@ -9,4 +11,5 @@ export interface SessionData {
   statistics_interval: "all" | "day" | "week" | "month";
   show_pass: boolean;
   group_id: number;
+  students_attendance: TCreateStudentAttendance[];
 }

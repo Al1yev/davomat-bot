@@ -1,7 +1,12 @@
 import { Composer } from "grammy";
 import { Context } from "../types/context";
 import { bot } from "..";
-import { getAllGroupService, getAllStudentService } from "../../services";
+import {
+  createAttendanceService,
+  getAllAttendanceService,
+  getAllGroupService,
+  getAllStudentService,
+} from "../../services";
 import { groupKeyboard, studentKeyboard } from "../keyboards";
 
 export const composer = new Composer<Context>();
@@ -10,7 +15,7 @@ const feature = composer.chatType("private");
 feature.command("attendance", async (ctx) => {
   try {
     if (ctx.session.in_conversation) return;
-    console.log("Keldi");
+    ctx.session.students_attendance = [];
 
     await ctx.replyWithChatAction("typing");
     await bot.api.setMyCommands([
@@ -20,13 +25,12 @@ feature.command("attendance", async (ctx) => {
       { command: "attendance", description: "Davomat qilish ✅" },
     ]);
 
+    // Rendering Groups
     const groups = await getAllGroupService();
     if (!groups?.length) {
       await ctx.reply("Guruhlar mavjud emas!");
       return;
     }
-
-    // Rendering Groups
     for (let ind in groups) {
       const grp = groups[Number(ind)];
       groupKeyboard.text(`${grp.name} `, `group_${grp.id}`).row();
@@ -35,51 +39,65 @@ feature.command("attendance", async (ctx) => {
     const renderedGroup = await ctx.reply("Guruhni tanlang:", {
       reply_markup: groupKeyboard,
     });
+    // -------------------------------------------------------------
 
+    // Setting up callback queries
     bot.on("callback_query:data", async (ctx) => {
       try {
         const clbData = ctx.callbackQuery.data;
+        const today = `${new Date().getDate()}-${new Date().getMonth()}-${new Date().getFullYear()}`;
 
         // Button sorting
         if (clbData.startsWith("group")) {
+          // Getting group id
           ctx.session.group_id = Number(clbData.split("_")[1]);
-          console.log(!ctx.session.group_id);
-          console.log(ctx.session.group_id);
           if (!ctx.session.group_id) {
             ctx.reply(
               "Xatolik yuz berdi. Birozdan keyin qaytadan urinib ko'ring"
             );
             return;
           }
+          // ----------------------------------------------------------------
+
           await bot.api.deleteMessage(
             Number(ctx.chat?.id),
             renderedGroup.message_id
           );
+
+          // Checking date by group id
+          const lessonDate = await getAllAttendanceService({ date: today });
+
+          // Getting students by group id
           const students = await getAllStudentService({
             groupId: Number(ctx.session.group_id),
           });
+
           if (students) {
             for (let ind in students) {
               const std = students[Number(ind)];
               studentKeyboard
                 .text(
-                  `${std.first_name} ${std.last_name} ✅`,
+                  `${std.first_name} ${std.last_name} '✅'`,
                   `student_true_${ind}`
                 )
                 .row();
-            }
 
+              // Setting up students to session
+              ctx.session.students_attendance.push({
+                is_here: true,
+                student_id: students[ind]["id"],
+              });
+            }
             studentKeyboard
               .text("Bekor qilish ❌", "cancel")
               .text("Saqlash ✅", "save");
 
+            // Sending keyboard to user
             await ctx.reply("Guruh a'zolari: ", {
               reply_markup: studentKeyboard,
             });
           }
-          // Sho'rgacha ishladi
         } else if (clbData.startsWith("student")) {
-          console.log(clbData);
           // Clicking student buttons
           const students = await getAllStudentService({
             groupId: ctx.session.group_id,
@@ -89,6 +107,7 @@ feature.command("attendance", async (ctx) => {
             const isHere = clbData?.split("_")[1];
             const indexStd = Number(clbData?.split("_")[2]);
             const updatedStudent = students[indexStd];
+            console.log(ctx.session.students_attendance);
 
             // Checking students
             if (isHere == "true") {
@@ -96,11 +115,13 @@ feature.command("attendance", async (ctx) => {
                 text: `${updatedStudent.first_name} ${updatedStudent.last_name} ❌`,
                 callback_data: `student_false_${indexStd}`,
               };
+              ctx.session.students_attendance[indexStd]["is_here"] = false;
             } else {
               studentKeyboard.inline_keyboard[indexStd][0] = {
                 text: `${updatedStudent.first_name} ${updatedStudent.last_name} ✅`,
                 callback_data: `student_true_${indexStd}`,
               };
+              ctx.session.students_attendance[indexStd]["is_here"] = true;
             }
             await ctx.editMessageText("Guruh a'zolari: ", {
               reply_markup: studentKeyboard,
@@ -111,6 +132,25 @@ feature.command("attendance", async (ctx) => {
             });
             return;
           }
+        } else if (clbData == "cancel") {
+          await ctx.reply("Davomat bekor qilindi");
+          ctx.session.students_attendance = [];
+          return;
+        } else if (clbData == "save") {
+          const today = new Date();
+          const date = `${today.getDay()}-${today.getMonth()}-${today.getFullYear()}`;
+          const attendance = await createAttendanceService({
+            date,
+            attendances: ctx.session.students_attendance,
+          });
+          if (!attendance) {
+            await ctx.reply("Xatolik yuz berdi. Birozdan keyin urinib ko'ring");
+            ctx.session.students_attendance = [];
+            return;
+          }
+          await ctx.reply("Davomat saqlandi");
+          ctx.session.students_attendance = [];
+          return;
         }
       } catch (error) {
         console.error(error);
@@ -121,6 +161,7 @@ feature.command("attendance", async (ctx) => {
         }
       }
     });
+    // -------------------------------------------------------------
 
     return;
   } catch (error) {
@@ -132,56 +173,3 @@ feature.command("attendance", async (ctx) => {
     }
   }
 });
-
-/**
- *         // Getting students
-        const students = await getAllStudentService({
-          groupId: Number(clbData),
-        });
-
-        // Rendering students
-        if (students) {
-          for (let ind in students) {
-            const std = students[Number(ind)];
-            studentKeyboard
-              .text(`${std.first_name} ${std.last_name} ✅`, `true ${ind}`)
-              .row();
-          }
-          studentKeyboard
-            .text("Bekor qilish ❌", "cancel")
-            .text("Saqlash ✅", "save");
-
-          await ctx.reply("Guruh a'zolari: ", {
-            reply_markup: studentKeyboard,
-          });
-
-          bot.on("callback_query", async (ctx) => {
-            const data = ctx.callbackQuery.data;
-            if (data == "save") {
-              await ctx.deleteMessage();
-              await ctx.reply("Ma'lumotlar saqlandi!");
-              return;
-            }
-            const isHere = data?.split(" ")[0];
-            const indexStd = Number(data?.split(" ")[1]);
-            const updatedStudent = students[Number(data?.split(" ")[1])];
-
-            // Checking students
-            if (isHere == "true") {
-              studentKeyboard.inline_keyboard[indexStd][0] = {
-                text: `${updatedStudent.first_name} ${updatedStudent.last_name} ❌`,
-                callback_data: `false ${indexStd}`,
-              };
-            } else {
-              studentKeyboard.inline_keyboard[indexStd][0] = {
-                text: `${updatedStudent.first_name} ${updatedStudent.last_name} ✅`,
-                callback_data: `true ${indexStd}`,
-              };
-            }
-
-            await ctx.editMessageText("Click", {
-              reply_markup: studentKeyboard,
-            });
-          });
-        }
- */
